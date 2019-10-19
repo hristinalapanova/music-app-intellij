@@ -1,5 +1,7 @@
 package com.ga.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 @Entity
@@ -14,6 +16,7 @@ public class Song {
     @Column(name="length", nullable = false)
     private int length;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE})
     @JoinTable(name="user_song",
     joinColumns = @JoinColumn(name="song_id"),
