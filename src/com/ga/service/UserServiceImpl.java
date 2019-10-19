@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String signup(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         if(userDao.createUser(user) != null) {
             UserDetails userDetails = loadUserByUsername(user.getUserName());
 
@@ -60,8 +61,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String singIn(User user) {
-        if(userDao.singIn(user) != null) {
-            UserDetails userDetails = loadUserByUsername(user.getUserName());
+        User foundUser = userDao.singIn(user);
+        if(foundUser != null &&
+                foundUser.getUserId() != null &&
+                bCryptPasswordEncoder.matches(user.getPassword(), foundUser.getPassword())) {
+            UserDetails userDetails = loadUserByUsername(foundUser.getUserName());
 
             return jwtUtil.generateToken(userDetails);
         }
