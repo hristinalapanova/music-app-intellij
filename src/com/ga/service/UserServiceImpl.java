@@ -1,5 +1,6 @@
 package com.ga.service;
 
+import com.ga.config.JwtUtil;
 import com.ga.dao.SongDao;
 import com.ga.dao.UserDao;
 import com.ga.entity.Song;
@@ -23,6 +24,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserDao userDao;
+    @Autowired
+    JwtUtil jwtUtil;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -45,37 +48,49 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public User signup(User user) {
+    public String signup(User user) {
+        if(userDao.createUser(user) != null) {
+            UserDetails userDetails = loadUserByUsername(user.getUserName());
+
+            return jwtUtil.generateToken(userDetails);
+        }
+
         return null;
     }
 
     @Override
-    public User singIn(User user) {
+    public String singIn(User user) {
+        if(userDao.singIn(user) != null) {
+            UserDetails userDetails = loadUserByUsername(user.getUserName());
+
+            return jwtUtil.generateToken(userDetails);
+        }
+
         return null;
     }
 
     @Override
     public Long deleteUser(Long userId) {
-        return null;
+        return userDao.deleteUser(userId);
     }
 
     @Override
     public User updateUser(User user, Long userId) {
-        return null;
+        return userDao.updateUser(user, userId);
     }
 
     @Override
     public User getUserByUserName(String username) {
-        return null;
+        return userDao.getUserByUserName(username);
     }
 
     @Override
     public List<Song> getSongs(String username) {
-        return null;
+        return userDao.getSongs(username);
     }
 
     @Override
     public List<Song> addSong(String username, Long songId) {
-        return null;
+        return userDao.addSong(username, songId);
     }
 }
